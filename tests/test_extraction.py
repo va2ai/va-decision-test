@@ -4,10 +4,11 @@ import os
 from src.extraction.models import ExtractionResult
 from src.extraction.gemini import extract_entities
 
-# Skip if no API key
+# Skip if no API key or placeholder key
+_api_key = os.getenv("GEMINI_API_KEY", "")
 pytestmark = pytest.mark.skipif(
-    not os.getenv("GEMINI_API_KEY"),
-    reason="GEMINI_API_KEY not set"
+    not _api_key or _api_key == "your-key-here" or len(_api_key) < 20,
+    reason="GEMINI_API_KEY not set or invalid"
 )
 
 SAMPLE_TEXT = """
