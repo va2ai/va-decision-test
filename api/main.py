@@ -155,6 +155,35 @@ async def get_logs(limit: int = Query(20, ge=1, le=100)):
         "message": "Log streaming not yet implemented - check server console for logs"
     }
 
+# Admin dashboard endpoint
+@app.get("/admin", response_class=HTMLResponse, tags=["Health"], include_in_schema=True)
+async def get_admin_dashboard():
+    """
+    Admin dashboard for system management.
+
+    **Features:**
+    - Data import/export
+    - Database management
+    - System configuration
+    - API endpoint testing
+    - System logs
+    - Real-time statistics
+
+    **Note:** In production, protect this with authentication.
+    """
+    import os
+    admin_path = os.path.join(os.path.dirname(__file__), "admin.html")
+    logger.info(f"Loading admin dashboard from: {admin_path}")
+
+    if not os.path.exists(admin_path):
+        logger.error(f"Admin dashboard not found at: {admin_path}")
+        raise HTTPException(status_code=404, detail=f"Admin dashboard not found")
+
+    with open(admin_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+        logger.info("Admin dashboard loaded successfully")
+        return HTMLResponse(content=content)
+
 # ============================================================================
 # SEARCH & FETCH ENDPOINTS
 # ============================================================================
