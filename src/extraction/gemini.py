@@ -60,10 +60,9 @@ def extract_entities(text: str, max_text_length: int = 30000) -> ExtractionResul
     prompt = EXTRACTION_PROMPT + text
 
     response = client.models.generate_content(
-        model="gemini-2.0-flash",
+        model="gemini-3-flash-preview",
         contents=prompt,
         config=types.GenerateContentConfig(
-            temperature=0.1,
             response_mime_type="application/json",
         ),
     )
