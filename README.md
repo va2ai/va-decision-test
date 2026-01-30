@@ -102,8 +102,14 @@ pip install -e ".[dev]"
 # Run ingestion (start with 5 decisions to test)
 python scripts/ingest.py --limit 5
 
+# Score issues with LEGALBENCH-inspired dual scores
+python scripts/score_issues.py
+
 # Validate the schema
 python scripts/validate.py
+
+# Run LEGALBENCH-style reasoning validation
+python scripts/validate_reasoning.py
 ```
 
 ## Schema Validation Criteria
@@ -139,6 +145,17 @@ pytest tests/test_fetcher.py -v
 # Skip database-dependent tests
 SKIP_DB_TESTS=true pytest tests/ -v
 ```
+
+## LEGALBENCH-Inspired Enhancements
+
+This system includes rigorous evaluation features inspired by the LEGALBENCH legal reasoning benchmark:
+
+- **Dual-Score Evaluation**: Separates correctness (logical validity) from analysis depth (reasoning quality)
+- **Rule-Recall Metadata**: Explicitly tracks legal rules identified in decisions
+- **Rhetorical Understanding**: Tags for VA reasoning patterns (NEGATIVE_CREDIBILITY, NO_NEXUS_FOUND, etc.)
+- **Validation Suite**: Automated pass/fail gates for regression prevention
+
+See [docs/LEGALBENCH_ENHANCEMENTS.md](docs/LEGALBENCH_ENHANCEMENTS.md) for details.
 
 ## License
 

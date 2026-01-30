@@ -16,7 +16,9 @@ CREATE TABLE IF NOT EXISTS issues (
     decision_id INT REFERENCES decisions(id) ON DELETE CASCADE,
     issue_text TEXT NOT NULL,
     outcome TEXT,
-    connection_type TEXT
+    connection_type TEXT,
+    correctness_score FLOAT DEFAULT NULL,
+    analysis_depth_score FLOAT DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS conditions (

@@ -1,0 +1,182 @@
+[
+  {
+    "url": "https://www.va.gov/vetapp25/Files10/A25086438.txt",
+    "case_number": "A25086438",
+    "year": 2025,
+    "condition": "tinnitus",
+    "outcome": "granted",
+    "has_private_nexus": true,
+    "has_exam_inadequacy": false
+  },
+  {
+    "url": "https://www.va.gov/vetapp25/Files6/A25052378.txt",
+    "case_number": "A25052378",
+    "year": 2025,
+    "condition": "tinnitus",
+    "outcome": "granted",
+    "has_private_nexus": true,
+    "has_exam_inadequacy": false
+  },
+  {
+    "url": "https://www.va.gov/vetapp25/Files7/A25064307.txt",
+    "case_number": "A25064307",
+    "year": 2025,
+    "condition": "tinnitus",
+    "outcome": "granted",
+    "has_private_nexus": true,
+    "has_exam_inadequacy": false
+  },
+  {
+    "url": "https://www.va.gov/vetapp25/Files9/A25074331.txt",
+    "case_number": "A25074331",
+    "year": 2025,
+    "condition": "tinnitus",
+    "outcome": "granted",
+    "has_private_nexus": true,
+    "has_exam_inadequacy": false
+  },
+  {
+    "url": "https://www.va.gov/vetapp25/Files9/A25078904.txt",
+    "case_number": "A25078904",
+    "year": 2025,
+    "condition": "tinnitus",
+    "outcome": "granted",
+    "has_private_nexus": false,
+    "has_exam_inadequacy": false
+  },
+  {
+    "url": "https://www.va.gov/vetapp25/Files7/A25059518.txt",
+    "case_number": "A25059518",
+    "year": 2025,
+    "condition": "tinnitus",
+    "outcome": "denied",
+    "has_private_nexus": true,
+    "has_exam_inadequacy": false
+  },
+  {
+    "url": "https://www.va.gov/vetapp25/Files10/A25085679.txt",
+    "case_number": "A25085679",
+    "year": 2025,
+    "condition": "tinnitus",
+    "outcome": "denied",
+    "has_private_nexus": true,
+    "has_exam_inadequacy": false
+  },
+  {
+    "url": "https://www.va.gov/vetapp25/Files9/A25082795.txt",
+    "case_number": "A25082795",
+    "year": 2025,
+    "condition": "tinnitus",
+    "outcome": "denied",
+    "has_private_nexus": true,
+    "has_exam_inadequacy": false
+  },
+  {
+    "url": "https://www.va.gov/vetapp25/Files10/A25086502.txt",
+    "case_number": "A25086502",
+    "year": 2025,
+    "condition": "tinnitus",
+    "outcome": "denied",
+    "has_private_nexus": true,
+    "has_exam_inadequacy": false
+  },
+  {
+    "url": "https://www.va.gov/vetapp25/Files6/A25049404.txt",
+    "case_number": "A25049404",
+    "year": 2025,
+    "condition": "tinnitus",
+    "outcome": "denied",
+    "has_private_nexus": true,
+    "has_exam_inadequacy": false
+  },
+  {
+    "url": "https://www.va.gov/vetapp25/Files10/A25093030.txt",
+    "case_number": "A25093030",
+    "year": 2025,
+    "condition": "tinnitus",
+    "outcome": "remanded",
+    "has_private_nexus": true,
+    "has_exam_inadequacy": false
+  },
+  {
+    "url": "https://www.va.gov/vetapp25/Files10/A25085427.txt",
+    "case_number": "A25085427",
+    "year": 2025,
+    "condition": "tinnitus",
+    "outcome": "remanded",
+    "has_private_nexus": true,
+    "has_exam_inadequacy": false
+  },
+  {
+    "url": "https://www.va.gov/vetapp24/Files12/A24083756.txt",
+    "case_number": "A24083756",
+    "year": 2024,
+    "condition": "tinnitus",
+    "outcome": "remanded",
+    "has_private_nexus": true,
+    "has_exam_inadequacy": false
+  },
+  {
+    "url": "https://www.va.gov/vetapp24/Files12/A24085380.txt",
+    "case_number": "A24085380",
+    "year": 2024,
+    "condition": "tinnitus",
+    "outcome": "remanded",
+    "has_private_nexus": true,
+    "has_exam_inadequacy": false
+  },
+  {
+    "url": "https://www.va.gov/vetapp23/Files12/23068077.txt",
+    "case_number": "23068077",
+    "year": 2023,
+    "condition": "tinnitus",
+    "outcome": "remanded",
+    "has_private_nexus": false,
+    "has_exam_inadequacy": false
+  },
+  {
+    "url": "https://www.va.gov/vetapp25/Files8/A25070215.txt",
+    "case_number": "A25070215",
+    "year": 2025,
+    "condition": "sleep apnea secondary",
+    "outcome": "granted",
+    "has_private_nexus": true,
+    "has_exam_inadequacy": false
+  },
+  {
+    "url": "https://www.va.gov/vetapp25/Files9/A25074734.txt",
+    "case_number": "A25074734",
+    "year": 2025,
+    "condition": "sleep apnea secondary",
+    "outcome": "granted",
+    "has_private_nexus": true,
+    "has_exam_inadequacy": false
+  },
+  {
+    "url": "https://www.va.gov/vetapp25/Files9/A25082424.txt",
+    "case_number": "A25082424",
+    "year": 2025,
+    "condition": "sleep apnea secondary",
+    "outcome": "granted",
+    "has_private_nexus": true,
+    "has_exam_inadequacy": false
+  },
+  {
+    "url": "https://www.va.gov/vetapp25/Files10/A25093710.txt",
+    "case_number": "A25093710",
+    "year": 2025,
+    "condition": "sleep apnea secondary",
+    "outcome": "granted",
+    "has_private_nexus": true,
+    "has_exam_inadequacy": false
+  },
+  {
+    "url": "https://www.va.gov/vetapp25/Files7/A25063544.txt",
+    "case_number": "A25063544",
+    "year": 2025,
+    "condition": "sleep apnea secondary",
+    "outcome": "granted",
+    "has_private_nexus": true,
+    "has_exam_inadequacy": false
+  }
+]

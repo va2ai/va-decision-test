@@ -11,7 +11,7 @@ class ExtractedIssue(BaseModel):
 
 class ExtractedPassage(BaseModel):
     text: str
-    tag: str  # MEDICAL_OPINION, EXAM_ADEQUACY, LAY_EVIDENCE, REASONS_BASES
+    tag: str  # MEDICAL_OPINION, EXAM_ADEQUACY, LAY_EVIDENCE, REASONS_BASES, NEGATIVE_CREDIBILITY, NO_NEXUS_FOUND, BENEFIT_OF_DOUBT_APPLIED, WEIGHING_OF_EVIDENCE
     confidence: float = 0.7
 
 class ExtractionResult(BaseModel):
@@ -19,3 +19,5 @@ class ExtractionResult(BaseModel):
     authorities: list[str] = Field(default_factory=list)
     passages: list[ExtractedPassage] = Field(default_factory=list)
     system_type: Optional[str] = None
+    rule_recalled: Optional[str] = None  # Legal rule explicitly stated (e.g., "38 C.F.R. § 3.310")
+    rule_confidence: Optional[float] = None  # Confidence that rule was accurately identified

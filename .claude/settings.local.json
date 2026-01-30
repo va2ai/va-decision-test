@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(Get-ChildItem docs*.md)",
+      "Bash(Select-Object Name)",
+      "Bash(Get-ChildItem scripts*.py)",
+      "Bash(python scripts/validate_reasoning.py:*)"
+    ]
+  }
+}
