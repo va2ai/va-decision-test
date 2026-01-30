@@ -129,18 +129,22 @@ def extract_decision_entities(text: str) -> ExtractionResponse:
     extraction = extract_entities(text)
 
     issues = []
-    for issue in extraction.get("issues", []):
+    for issue in extraction.issues:
         passages = [
-            PassageData(**p) for p in issue.get("key_passages", [])
+            PassageData(
+                text=p.text,
+                tag=p.tag,
+                confidence=p.confidence
+            ) for p in issue.passages
         ]
 
         issues.append(IssueExtraction(
-            issue_text=issue["issue_text"],
-            condition=issue["condition"],
-            outcome=issue["outcome"],
-            evidence_types=issue.get("evidence_types", []),
-            provider_types=issue.get("provider_types", []),
-            authorities=issue.get("authorities", []),
+            issue_text=issue.issue_text,
+            condition=issue.condition,
+            outcome=issue.outcome,
+            evidence_types=issue.evidence_types,
+            provider_types=issue.provider_types,
+            authorities=issue.authorities,
             key_passages=passages
         ))
 
@@ -302,7 +306,7 @@ def ingest_decision_service(
         )
         conn.commit()
 
-        issues_extracted = len(extraction.get("issues", []))
+        issues_extracted = len(extraction.issues)
 
         return IngestResponse(
             success=True,
