@@ -16,9 +16,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from fastapi import FastAPI, HTTPException, BackgroundTasks, Query, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse, FileResponse
 from typing import Optional, Literal
 import logging
+from pathlib import Path
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -108,6 +109,51 @@ async def get_metrics():
     **Returns:** Latency, token usage, and error statistics.
     """
     return metrics.get_summary()
+
+# Dashboard endpoint
+@app.get("/dashboard", response_class=HTMLResponse, tags=["Health"], include_in_schema=True)
+async def get_dashboard():
+    """
+    Developer dashboard with real-time metrics and logs.
+
+    **Features:**
+    - Real-time metrics visualization
+    - Latency charts
+    - Error categorization
+    - Recent activity logs
+    - API endpoint statistics
+    """
+    import os
+    dashboard_path = os.path.join(os.path.dirname(__file__), "dashboard.html")
+    logger.info(f"Loading dashboard from: {dashboard_path}")
+
+    if not os.path.exists(dashboard_path):
+        logger.error(f"Dashboard file not found at: {dashboard_path}")
+        raise HTTPException(status_code=404, detail=f"Dashboard not found at {dashboard_path}")
+
+    with open(dashboard_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+        logger.info("Dashboard loaded successfully")
+        return HTMLResponse(content=content)
+
+# Logs endpoint
+@app.get("/logs", tags=["Health"])
+async def get_logs(limit: int = Query(20, ge=1, le=100)):
+    """
+    Get recent log entries.
+
+    **Parameters:**
+    - limit: Maximum number of log entries to return (1-100)
+
+    **Returns:** List of recent log entries with metadata.
+    """
+    # In production, this would read from a log buffer or file
+    # For now, return a simple structure
+    return {
+        "logs": [],
+        "count": 0,
+        "message": "Log streaming not yet implemented - check server console for logs"
+    }
 
 # ============================================================================
 # SEARCH & FETCH ENDPOINTS

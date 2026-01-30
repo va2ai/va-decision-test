@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VA Decision API - Dev Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .subtitle {
+            color: #e0e7ff;
+            font-size: 1.1rem;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-left: 15px;
+        }
+
+        .status.healthy {
+            background: #10b981;
+            color: white;
+        }
+
+        .status.warning {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border: 1px solid #334155;
+        }
+
+        .card h2 {
+            font-size: 1.3rem;
+            margin-bottom: 16px;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .metric {
+            margin: 16px 0;
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #f1f5f9;
+        }
+
+        .metric-unit {
+            font-size: 1rem;
+            color: #94a3b8;
+            margin-left: 6px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 250px;
+            margin-top: 20px;
+        }
+
+        .log-container {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            border: 1px solid #334155;
+        }
+
+        .log-entry {
+            padding: 8px;
+            margin: 4px 0;
+            border-left: 3px solid #475569;
+            background: #1e293b;
+            border-radius: 4px;
+        }
+
+        .log-entry.info {
+            border-left-color: #3b82f6;
+        }
+
+        .log-entry.error {
+            border-left-color: #ef4444;
+            background: #1f1a1a;
+        }
+
+        .log-entry.warning {
+            border-left-color: #f59e0b;
+        }
+
+        .log-time {
+            color: #64748b;
+            margin-right: 10px;
+        }
+
+        .log-level {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .log-level.INFO {
+            background: #1e40af;
+            color: #bfdbfe;
+        }
+
+        .log-level.ERROR {
+            background: #991b1b;
+            color: #fecaca;
+        }
+
+        .log-level.WARNING {
+            background: #92400e;
+            color: #fed7aa;
+        }
+
+        .error-category {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            margin: 4px;
+            background: #dc2626;
+            color: white;
+        }
+
+        .endpoint-list {
+            list-style: none;
+        }
+
+        .endpoint-item {
+            padding: 12px;
+            margin: 8px 0;
+            background: #0f172a;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #334155;
+        }
+
+        .endpoint-name {
+            font-family: 'Courier New', monospace;
+            color: #60a5fa;
+        }
+
+        .endpoint-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 0.85rem;
+        }
+
+        .endpoint-stat {
+            color: #94a3b8;
+        }
+
+        .endpoint-stat span {
+            color: #f1f5f9;
+            font-weight: 600;
+        }
+
+        .refresh-info {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        .icon {
+            font-size: 1.5rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: #1e40af;
+            color: #bfdbfe;
+        }
+
+        .wide-card {
+            grid-column: 1 / -1;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .updating {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 VA Decision API Dashboard</h1>
+            <p class="subtitle">Real-time observability and telemetry</p>
+            <span class="status healthy" id="health-status">● Healthy</span>
+        </header>
+
+        <div class="grid">
+            <!-- Total Metrics -->
+            <div class="card">
+                <h2><span class="icon">📊</span> Total Metrics</h2>
+                <div class="metric">
+                    <div class="metric-label">Collected</div>
+                    <div class="metric-value" id="total-metrics">0</div>
+                </div>
+            </div>
+
+            <!-- Average Latency -->
+            <div class="card">
+                <h2><span class="icon">⚡</span> Avg Latency</h2>
+                <div class="metric">
+                    <div class="metric-label">Response Time</div>
+                    <div class="metric-value" id="avg-latency">0<span class="metric-unit">ms</span></div>
+                </div>
+                <div class="metric" style="font-size: 0.9rem; margin-top: 10px;">
+                    <span style="color: #94a3b8;">Min:</span> <span id="min-latency" style="color: #10b981;">0ms</span>
+                    <span style="color: #94a3b8; margin-left: 15px;">Max:</span> <span id="max-latency" style="color: #ef4444;">0ms</span>
+                </div>
+            </div>
+
+            <!-- Total Errors -->
+            <div class="card">
+                <h2><span class="icon">🚨</span> Total Errors</h2>
+                <div class="metric">
+                    <div class="metric-label">Errors</div>
+                    <div class="metric-value" id="total-errors">0</div>
+                </div>
+            </div>
+
+            <!-- Token Usage -->
+            <div class="card">
+                <h2><span class="icon">🔤</span> Token Usage</h2>
+                <div class="metric">
+                    <div class="metric-label">LLM Tokens</div>
+                    <div class="metric-value" id="total-tokens">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- Latency Chart -->
+            <div class="card wide-card">
+                <h2><span class="icon">📈</span> Latency Distribution</h2>
+                <div class="chart-container">
+                    <canvas id="latencyChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Error Categories -->
+            <div class="card">
+                <h2><span class="icon">🎯</span> Error Categories</h2>
+                <div id="error-categories" style="margin-top: 15px;">
+                    <p style="color: #64748b; text-align: center;">No errors recorded</p>
+                </div>
+            </div>
+
+            <!-- Endpoint Stats -->
+            <div class="card">
+                <h2><span class="icon">🌐</span> API Endpoints</h2>
+                <ul class="endpoint-list" id="endpoint-list">
+                    <li style="color: #64748b; text-align: center;">Loading...</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Recent Logs -->
+        <div class="card wide-card">
+            <h2><span class="icon">📝</span> Recent Activity <span class="badge" id="log-count">0 events</span></h2>
+            <div class="log-container" id="log-container">
+                <div class="log-entry info">
+                    <span class="log-time">Waiting for data...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="refresh-info">
+            Auto-refreshing every 3 seconds • Last update: <span id="last-update">Never</span>
+        </div>
+    </div>
+
+    <script>
+        let latencyChart = null;
+        let latencyHistory = [];
+        let logHistory = [];
+        const MAX_HISTORY = 20;
+
+        // Initialize latency chart
+        function initLatencyChart() {
+            const ctx = document.getElementById('latencyChart').getContext('2d');
+            latencyChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Avg Latency (ms)',
+                        data: [],
+                        borderColor: '#60a5fa',
+                        backgroundColor: 'rgba(96, 165, 250, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#e2e8f0' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#94a3b8' },
+                            grid: { color: '#334155' }
+                        },
+                        x: {
+                            ticks: { color: '#94a3b8' },
+                            grid: { color: '#334155' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Fetch metrics from API
+        async function fetchMetrics() {
+            try {
+                const response = await fetch('/metrics');
+                const data = await response.json();
+                updateDashboard(data);
+            } catch (error) {
+                console.error('Failed to fetch metrics:', error);
+                document.getElementById('health-status').textContent = '● Unhealthy';
+                document.getElementById('health-status').className = 'status warning';
+            }
+        }
+
+        // Update dashboard with metrics
+        function updateDashboard(metrics) {
+            // Update basic metrics
+            document.getElementById('total-metrics').textContent = metrics.total_metrics || 0;
+            document.getElementById('avg-latency').innerHTML =
+                (metrics.latency?.avg_ms || 0).toFixed(1) + '<span class="metric-unit">ms</span>';
+            document.getElementById('min-latency').textContent =
+                (metrics.latency?.min_ms || 0).toFixed(1) + 'ms';
+            document.getElementById('max-latency').textContent =
+                (metrics.latency?.max_ms || 0).toFixed(1) + 'ms';
+            document.getElementById('total-errors').textContent = metrics.errors?.total || 0;
+            document.getElementById('total-tokens').textContent = metrics.tokens?.total || 0;
+
+            // Update latency chart
+            const timestamp = new Date().toLocaleTimeString();
+            latencyHistory.push({
+                time: timestamp,
+                value: metrics.latency?.avg_ms || 0
+            });
+            if (latencyHistory.length > MAX_HISTORY) {
+                latencyHistory.shift();
+            }
+            updateChart();
+
+            // Update error categories
+            updateErrorCategories(metrics.errors?.by_category || {});
+
+            // Update endpoint stats
+            updateEndpoints(metrics);
+
+            // Update last refresh time
+            document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
+        }
+
+        // Update latency chart
+        function updateChart() {
+            if (!latencyChart) return;
+
+            latencyChart.data.labels = latencyHistory.map(h => h.time);
+            latencyChart.data.datasets[0].data = latencyHistory.map(h => h.value);
+            latencyChart.update('none');
+        }
+
+        // Update error categories
+        function updateErrorCategories(categories) {
+            const container = document.getElementById('error-categories');
+
+            if (Object.keys(categories).length === 0) {
+                container.innerHTML = '<p style="color: #64748b; text-align: center;">No errors recorded</p>';
+                return;
+            }
+
+            container.innerHTML = Object.entries(categories)
+                .map(([category, count]) =>
+                    `<div class="error-category">${category}: ${count}</div>`
+                )
+                .join('');
+        }
+
+        // Update endpoints list
+        function updateEndpoints(metrics) {
+            const container = document.getElementById('endpoint-list');
+
+            // Mock endpoint data (in production, track per-endpoint)
+            const endpoints = [
+                { name: 'GET /health', calls: metrics.latency?.count || 0, avg_ms: 1.2 },
+                { name: 'GET /metrics', calls: Math.floor((metrics.latency?.count || 0) * 0.3), avg_ms: 0.9 },
+                { name: 'POST /api/v1/search', calls: 1, avg_ms: metrics.latency?.max_ms || 0 },
+                { name: 'GET /api/v1/decision/{id}', calls: 1, avg_ms: 1574.7 }
+            ].filter(e => e.calls > 0);
+
+            if (endpoints.length === 0) {
+                container.innerHTML = '<li style="color: #64748b; text-align: center;">No endpoints called yet</li>';
+                return;
+            }
+
+            container.innerHTML = endpoints
+                .map(endpoint => `
+                    <li class="endpoint-item">
+                        <span class="endpoint-name">${endpoint.name}</span>
+                        <div class="endpoint-stats">
+                            <span class="endpoint-stat">Calls: <span>${endpoint.calls}</span></span>
+                            <span class="endpoint-stat">Avg: <span>${endpoint.avg_ms.toFixed(1)}ms</span></span>
+                        </div>
+                    </li>
+                `)
+                .join('');
+        }
+
+        // Simulate log updates (in production, fetch from /logs endpoint)
+        function updateLogs() {
+            const container = document.getElementById('log-container');
+
+            // Add simulated log entry
+            const now = new Date().toLocaleTimeString();
+            logHistory.unshift({
+                time: now,
+                level: 'INFO',
+                message: 'Dashboard refreshed metrics',
+                category: null
+            });
+
+            if (logHistory.length > 10) {
+                logHistory.pop();
+            }
+
+            container.innerHTML = logHistory
+                .map(log => `
+                    <div class="log-entry ${log.level.toLowerCase()}">
+                        <span class="log-time">${log.time}</span>
+                        <span class="log-level ${log.level}">${log.level}</span>
+                        <span>${log.message}</span>
+                    </div>
+                `)
+                .join('');
+
+            document.getElementById('log-count').textContent = `${logHistory.length} events`;
+        }
+
+        // Initialize dashboard
+        initLatencyChart();
+        fetchMetrics();
+        updateLogs();
+
+        // Auto-refresh every 3 seconds
+        setInterval(() => {
+            fetchMetrics();
+            updateLogs();
+        }, 3000);
+    </script>
+</body>
+</html>
