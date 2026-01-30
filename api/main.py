@@ -49,13 +49,11 @@ from api.services import (
     get_authority_stats_service,
     ingest_decision_service,
 )
+from api.middleware import ObservabilityMiddleware
+from api.observability import metrics, StructuredLogger
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | %(name)s | %(levelname)s | %(message)s"
-)
-logger = logging.getLogger(__name__)
+# Configure structured logging
+logger = StructuredLogger("api.main")
 
 # Create FastAPI app
 app = FastAPI(
@@ -83,6 +81,9 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
+# Add observability middleware (before CORS)
+app.add_middleware(ObservabilityMiddleware)
+
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
@@ -97,6 +98,16 @@ app.add_middleware(
 async def health_check():
     """Health check endpoint."""
     return {"status": "healthy", "service": "va-decision-api"}
+
+# Metrics endpoint
+@app.get("/metrics", tags=["Health"])
+async def get_metrics():
+    """
+    Get application metrics summary.
+
+    **Returns:** Latency, token usage, and error statistics.
+    """
+    return metrics.get_summary()
 
 # ============================================================================
 # SEARCH & FETCH ENDPOINTS

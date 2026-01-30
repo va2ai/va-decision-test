@@ -8,8 +8,9 @@ Implements business logic for:
 - Database queries
 - Ingestion pipeline
 """
-import logging
+import time
 from typing import Optional, Literal
+from fastapi import HTTPException
 from src.fetcher.search import search_bva, fetch_decision_text
 from src.fetcher.parser import parse_decision
 from src.extraction.gemini import extract_entities
@@ -33,8 +34,14 @@ from api.models import (
     AuthorityStatsItem,
     IngestResponse,
 )
+from api.observability import (
+    StructuredLogger,
+    ErrorCategory,
+    metrics,
+    track_external_call,
+)
 
-logger = logging.getLogger(__name__)
+logger = StructuredLogger("api.services")
 
 
 # ============================================================================
@@ -84,23 +91,38 @@ def fetch_and_parse_decision(
         DecisionResponse with raw text and parsed metadata
 
     Raises:
-        ValueError: If decision not found
+        HTTPException: If decision not found or parsing fails
     """
     # Construct URL
     if not year:
-        raise ValueError("Year is required when fetching by case number")
+        logger.error("Year parameter missing", error_category=ErrorCategory.VALIDATION)
+        metrics.record_error(ErrorCategory.VALIDATION, "fetch_and_parse_decision")
+        raise HTTPException(status_code=400, detail="Year is required when fetching by case number")
 
     yy = str(year)[2:]  # 2024 → "24"
     url = f"https://www.va.gov/vetapp{yy}/Files12/{case_number}.txt"
 
-    # Fetch text
+    # Fetch text with external API tracking
+    start_time = time.time()
     try:
         raw_text = fetch_decision_text(url)
+        duration_ms = (time.time() - start_time) * 1000
+        metrics.record_external_api_call("va.gov", True, duration_ms)
+        logger.info(f"Fetched decision {case_number}", metadata={"url": url, "length": len(raw_text)})
     except Exception as e:
-        raise ValueError(f"Decision not found at {url}: {e}")
+        duration_ms = (time.time() - start_time) * 1000
+        metrics.record_external_api_call("va.gov", False, duration_ms)
+        logger.error(f"Failed to fetch decision: {e}", error_category=ErrorCategory.EXTERNAL_API, metadata={"url": url})
+        metrics.record_error(ErrorCategory.EXTERNAL_API, "fetch_and_parse_decision")
+        raise HTTPException(status_code=404, detail=f"Decision not found at {url}")
 
     # Parse
-    parsed = parse_decision(raw_text)
+    try:
+        parsed = parse_decision(raw_text)
+    except Exception as e:
+        logger.error(f"Failed to parse decision: {e}", error_category=ErrorCategory.PARSING, metadata={"case_number": case_number})
+        metrics.record_error(ErrorCategory.PARSING, "fetch_and_parse_decision")
+        raise HTTPException(status_code=500, detail=f"Failed to parse decision: {e}")
 
     return DecisionResponse(
         case_number=case_number,
@@ -125,8 +147,31 @@ def extract_decision_entities(text: str) -> ExtractionResponse:
 
     Returns:
         ExtractionResponse with extracted issues and entities
+
+    Raises:
+        HTTPException: If extraction fails
     """
-    extraction = extract_entities(text)
+    start_time = time.time()
+    try:
+        extraction = extract_entities(text)
+        duration_ms = (time.time() - start_time) * 1000
+
+        # Track token usage (approximate based on text length)
+        # Gemini 2.0 Flash uses ~1 token per 4 chars
+        approx_tokens = len(text) // 4
+        metrics.record_token_usage("entity_extraction", approx_tokens)
+
+        logger.info(
+            "Entity extraction completed",
+            metadata={
+                "issues_found": len(extraction.issues),
+                "duration_ms": duration_ms
+            }
+        )
+    except Exception as e:
+        logger.error(f"LLM extraction failed: {e}", error_category=ErrorCategory.EXTRACTION)
+        metrics.record_error(ErrorCategory.EXTRACTION, "extract_decision_entities")
+        raise HTTPException(status_code=500, detail=f"Failed to extract entities: {e}")
 
     issues = []
     for issue in extraction.issues:

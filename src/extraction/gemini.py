@@ -60,12 +60,23 @@ def extract_entities(text: str, max_text_length: int = 30000) -> ExtractionResul
     prompt = EXTRACTION_PROMPT + text
 
     response = client.models.generate_content(
-        model="gemini-3-flash-preview",
+        model="gemini-2.0-flash",
         contents=prompt,
         config=types.GenerateContentConfig(
+            temperature=0.1,
             response_mime_type="application/json",
         ),
     )
+
+    # Track token usage if metadata available
+    try:
+        if hasattr(response, 'usage_metadata'):
+            usage = response.usage_metadata
+            total_tokens = getattr(usage, 'total_token_count', 0)
+            if total_tokens > 0:
+                logger.info(f"Gemini API usage: {total_tokens} tokens")
+    except Exception:
+        pass  # Token tracking is best-effort
 
     try:
         data = json.loads(response.text)
