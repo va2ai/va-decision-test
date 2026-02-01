@@ -5,7 +5,22 @@
       "Bash(Get-ChildItem docs*.md)",
       "Bash(Select-Object Name)",
       "Bash(Get-ChildItem scripts*.py)",
-      "Bash(python scripts/validate_reasoning.py:*)"
+      "Bash(python scripts/validate_reasoning.py:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\ndocs: enhance README with evaluation rigor and domain portability framing\n\n- Position as LLM evaluation & graph-based retrieval system\n- Emphasize production-minded data pipeline approach\n- Add domain portability section \\(court opinions, insurance, regulatory\\)\n- Restructure key features with clearer validation criteria\n- Improve \"Why This Matters\" with transparency/evaluation focus\n- Enhance LEGALBENCH section formatting\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)",
+      "Bash(python:*)",
+      "Bash(curl:*)",
+      "Bash(if exist nul del /F nul)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: add balanced selector and API-based scaling to 100 decisions\n\nImplements proper quota balancing for 100-decision corpus:\n\nBalanced Selector \\(src/fetcher/balanced_selector.py\\):\n- Ensures 25 granted / 25 denied / 25 remanded / 25 mixed\n- Tracks special requirements \\(10+ private nexus, 10+ exam inadequacy\\)\n- Intelligent quota filling with progress tracking\n- Searches broadly to find mixed outcomes\n\nAPI Scaling Scripts:\n- scripts/scale_to_100.py: Full ingestion via API endpoints\n- scripts/test_scale.py: Quick test with 3 decisions\n- Uses /api/v1/ingest endpoint for each decision\n- Progress tracking and validation\n- Resume capability for long-running operations\n\nAPI Services Fixes \\(api/services.py\\):\n- Fixed ExtractionResult handling \\(Pydantic model, not dict\\)\n- Properly access .issues attribute instead of .get\\(\"issues\"\\)\n- Correct PassageData construction from Pydantic models\n\nFeatures:\n- Outcome-balanced corpus \\(25/25/25/25\\)\n- Special pattern detection and tracking  \n- Progress reports every 10 decisions\n- Validation checks after completion\n- Saves selection metadata to JSON\n\nNext Steps:\n- Ensure valid Gemini API key is configured\n- Run: python scripts/scale_to_100.py\n- Estimated time: 20-30 minutes for 100 decisions\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(npm install:*)",
+      "Bash(timeout 15 npm run dev:*)",
+      "Bash(timeout 20 npm run dev:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\ndocs: add observability test results\n\nComprehensive test results showing all features working:\n- Structured JSON logging\n- Request context tracking\n- Error categorization\n- Metrics collection\n- Custom response headers\n- /metrics endpoint\n\nAll tests passing with real API calls.\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(taskkill:*)",
+      "Bash(cmd //c \"taskkill //F //PID 47620 & taskkill //F //PID 48468 & taskkill //F //PID 42772\")",
+      "Bash(powershell -Command:*)",
+      "Bash(git commit:*)"
     ]
   }
 }
